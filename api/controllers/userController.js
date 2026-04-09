@@ -6,7 +6,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const jwt = require("jsonwebtoken"); //npm install jsonwebtoken
 
 const register = async (req, res) => {
-  const { username, email, password, passwordConfirmation } = req.body;
+  const { username, email, password } = req.body;
   const existingEmail = await Users.findOne({ email: email.toLowerCase() });
   const existingUsername = await Users.findOne({ username: username });
   if (existingEmail) {
@@ -14,21 +14,6 @@ const register = async (req, res) => {
   }
   if (existingUsername) {
     return res.status(400).json({ ok: false, message: "Username already taken" });
-  }
-  if (!username || !email || !password || !passwordConfirmation) {
-    return res.status(400).json({ ok: false, message: "All fields required" });
-  }
-  if (password.length < 8) {
-    return res.status(400).json({
-      ok: false,
-      message: "Password must have at least 8 characters.",
-    });
-  }
-  if (password !== passwordConfirmation) {
-    return res.status(400).json({ ok: false, message: "Passwords must match" });
-  }
-  if (!validator.isEmail(email)) {
-    return res.status(400).json({ ok: false, message: "Invalid Email" });
   }
   try {
     const salt = bcrypt.genSaltSync(10);
@@ -62,7 +47,7 @@ const login = async (req, res) => {
     const match = bcrypt.compareSync(password, user.password);
     if (match) {
       //jwt_secret is a private key to verify the token on the server
-      const token = jwt.sign({ userEmail: user.email }, jwt_secret, {
+      const token = jwt.sign({ email: user.email }, jwt_secret, {
         expiresIn: "1h",
       });
       res.status(200).json({ ok: true, message: "Welcome back", token, email }); //200: OK
@@ -74,17 +59,7 @@ const login = async (req, res) => {
   }
 };
 
-const token = async (req, res) => {
-  const token = req.headers.authorization;
-  jwt.verify(token, jwt_secret, (err, succ) => {
-    err
-      ? res.status(401).json({ ok: false, message: "Token is corrupted" }) //401: Unauthorized
-      : res.status(200).json({ ok: true, succ });
-  });
-};
-
 module.exports = {
   register,
   login,
-  token,
 };
