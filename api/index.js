@@ -5,6 +5,7 @@ const port     = process.env.PORT || 4444
 app.use(require("express").urlencoded({extended: true}))
 app.use(require("express").json())
 console.log(process.env.MONGO)
+
 async function connectingToDB  () {
   try {
     await require("mongoose").connect(process.env.MONGO);
