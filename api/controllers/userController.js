@@ -14,7 +14,7 @@ const register = async (req, res) => {
   if (existingUsername) {
     return res
       .status(400)
-      .json({ ok: false, message: "Username already taken" });
+      .json({ ok: false, message: "Username already taken" }); //400: Bad request
   }
   try {
     const salt = bcrypt.genSaltSync(10);
@@ -24,9 +24,9 @@ const register = async (req, res) => {
       email: email.toLowerCase(),
       password: hash,
     };
-    console.log(newUser);
-    await Users.create(newUser);
-    res.status(201).json({ ok: true, data: newUser }); //201: created
+    //console.log(newUser);
+    const created = await Users.create(newUser);
+    res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
@@ -37,17 +37,17 @@ const login = async (req, res) => {
   if (!email || !password) {
     return res
       .status(400)
-      .json({ ok: false, message: "All fields are required" });
+      .json({ ok: false, message: "All fields are required" }); //400: Bad request
   }
   if (!validator.isEmail(email)) {
-    return res.status(400).json({ ok: false, message: "Invalid Email" });
+    return res.status(400).json({ ok: false, message: "Invalid Email" }); //400: Bad request
   }
   try {
     const user = await Users.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res
         .status(400)
-        .json({ ok: false, message: "Invalid user provided" });
+        .json({ ok: false, message: "Invalid user provided" }); //400: Bad request
     }
     const match = bcrypt.compareSync(password, user.password);
     if (match) {
@@ -55,10 +55,10 @@ const login = async (req, res) => {
     } else {
       return res
         .status(400)
-        .json({ ok: false, message: "Invalid data provided" });
+        .json({ ok: false, message: "Invalid data provided" }); //400: Bad request
     }
   } catch (error) {
-    res.status(500).json({ ok: false, error });
+    res.status(500).json({ ok: false, error }); //500: Internal server error
   }
 };
 

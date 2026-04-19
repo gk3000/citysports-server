@@ -41,13 +41,22 @@ const gameSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
-  datetime: {
-    type: Date,
+  date: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
     required: true,
   },
   status: {
-    type: String,
+    type: String, //scheduled, confirmed, cancelled, past
     required: true,
+  },
+  free_entry: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   cost: {
     type: Number,
@@ -59,5 +68,5 @@ const gameSchema = new mongoose.Schema({
   },
 });
 
-const Games = mongoose.model("Games", userSchema);
+const Games = mongoose.model("Games", gameSchema);
 module.exports = Games;
