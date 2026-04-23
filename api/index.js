@@ -20,6 +20,7 @@ connectingToDB();
 app.use(require("cors")());
 //==========================================================================
 app.use("/api/users", require("./routes/userRoute.js"));
+app.use("/api/games", require("./routes/gameRoute.js"));
 //==========================================================================
 app.listen(port, "0.0.0.0", () =>
   console.log("🚀 Listening on port: " + port + " 🚀"),
