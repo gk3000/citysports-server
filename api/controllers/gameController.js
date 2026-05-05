@@ -1,4 +1,5 @@
 const Games = require("../models/gameModel");
+const Users = require("../models/userModel");
 
 const addgame = async (req, res) => {
   const {
@@ -35,6 +36,11 @@ const addgame = async (req, res) => {
       cost: cost,
     };
     const created = await Games.create(newgame);
+    await Users.findOneAndUpdate(
+      { username: owner},
+      { $push: { games: created._id } },
+      { new: true },
+    );
     res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
