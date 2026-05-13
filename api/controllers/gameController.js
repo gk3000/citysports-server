@@ -1,4 +1,5 @@
 const Games = require("../models/gameModel");
+const Users = require("../models/userModel");
 
 const addgame = async (req, res) => {
   const {
@@ -15,6 +16,7 @@ const addgame = async (req, res) => {
     time,
     free_entry,
     cost,
+    skilllevel,
   } = req.body;
   try {
     const newgame = {
@@ -33,8 +35,14 @@ const addgame = async (req, res) => {
       status: "scheduled",
       free_entry: free_entry,
       cost: cost,
+      skilllevel: skilllevel,
     };
     const created = await Games.create(newgame);
+    await Users.findOneAndUpdate(
+      { username: owner },
+      { $push: { games: created._id } },
+      { new: true },
+    );
     res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
@@ -57,6 +65,7 @@ const editgame = async (req, res) => {
     status,
     free_entry,
     cost,
+    skilllevel,
   } = req.body;
   try {
     const game_edited = {
@@ -74,6 +83,7 @@ const editgame = async (req, res) => {
       status: status,
       free_entry: free_entry,
       cost: cost,
+      skilllevel: skilllevel,
     };
     const edited = await Games.findByIdAndUpdate(id, game_edited, {
       new: true,
@@ -102,8 +112,36 @@ const removegame = async (req, res) => {
   }
 };
 
+const getgame = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const game = await Games.findById(id);
+    res.status(200).json({ ok: true, data: game }); //200: OK
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
+const getgames = async (req, res) => {
+  const { city, owner, sports, skilllevel } = req.query; //test in postman with params
+  try {
+    let query = {};
+    query.city = city //mandatory filter
+    if (owner) query.owner = owner;
+    if (sports) query.sports = sports;
+    if (skilllevel) query.skilllevel = skilllevel;
+    const games = await Games.find(query);
+    console.log(games[0])
+    res.status(200).json({ ok: true, data: games }); //200: OK
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 module.exports = {
   addgame,
   editgame,
   removegame,
+  getgame,
+  getgames,
 };
