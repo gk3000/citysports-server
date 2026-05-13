@@ -125,15 +125,19 @@ const getgame = async (req, res) => {
 };
 
 const getgames = async (req, res) => {
-  const { city, owner, sports, skilllevel } = req.query; //test in postman with params
+  const { city, owner, sport, skilllevel } = req.query; //test in postman with params
   try {
     let query = {};
-    query.city = city //mandatory filter
+    query.city = city.trim(); //mandatory filter
     if (owner) query.owner = owner;
-    if (sports) query.sports = sports;
-    if (skilllevel) query.skilllevel = skilllevel;
+    if (sport) {
+      const sportArray = Array.isArray(sport) ? sport : [sport];
+      query.sport = { $in: sportArray };
+    }
+    if (skilllevel) query.skilllevel = { $in: skilllevel };
     const games = await Games.find(query);
-    console.log(games[0])
+    console.log(query);
+    console.log(games[0]);
     res.status(200).json({ ok: true, data: games }); //200: OK
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
