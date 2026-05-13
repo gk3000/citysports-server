@@ -63,7 +63,7 @@ const gameSchema = new mongoose.Schema({
     required: true,
   },
   skilllevel: {
-    type: String, //all levels, beginner, intermediate, advanced
+    type: Array, //beginner, intermediate, advanced
     required: true,
   },
   created: {
