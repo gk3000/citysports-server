@@ -2,6 +2,7 @@ const Games = require("../models/gameModel");
 const Users = require("../models/userModel");
 
 const addgame = async (req, res) => {
+  console.log('add game', req.body)
   const {
     title,
     description,
@@ -45,6 +46,7 @@ const addgame = async (req, res) => {
     );
     res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
+    console.log(error)
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
 };
