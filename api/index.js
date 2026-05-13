@@ -8,7 +8,7 @@ console.log(process.env.MONGO);
 
 async function connectingToDB() {
   try {
-    await require("mongoose").connect(process.env.MONGO);
+    await require("mongoose").set('debug',true).connect(process.env.MONGO);
     console.log("Connected to the DB ✅");
   } catch (error) {
     console.log("ERROR: Your DB is not running, start it up ☢️", error);
