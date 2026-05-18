@@ -2,7 +2,7 @@ const Games = require("../models/gameModel");
 const Users = require("../models/userModel");
 
 const addgame = async (req, res) => {
-  console.log('add game', req.body)
+  //console.log('add game', req.body)
   const {
     title,
     description,
@@ -46,7 +46,7 @@ const addgame = async (req, res) => {
     );
     res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
-    console.log(error)
+    //console.log(error)
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
 };
@@ -136,8 +136,8 @@ const getgames = async (req, res) => {
     }
     if (skilllevel) query.skilllevel = { $in: skilllevel };
     const games = await Games.find(query);
-    console.log(query);
-    console.log(games[0]);
+    //console.log(query);
+    //console.log(games[0]);
     res.status(200).json({ ok: true, data: games }); //200: OK
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error

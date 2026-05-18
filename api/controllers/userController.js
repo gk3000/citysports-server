@@ -1,4 +1,5 @@
 const Users = require("../models/userModel");
+const Games = require("../models/gameModel");
 const bcrypt = require("bcryptjs"); // https://github.com/dcodeIO/bcrypt.js#readme //npm install bcryptjs
 const validator = require("validator"); //npm install validator
 
@@ -62,7 +63,30 @@ const login = async (req, res) => {
   }
 };
 
+const deleteaccount = async (req, res) => {
+  const { id } = req.params;
+  try {
+    //delete games of user before deleting user account
+    const deletedgames = await Games.deleteMany({ owner: id });
+    console.log(deletedgames);
+    const deleteduser = await Users.findByIdAndDelete(id);
+    console.log(deleteduser);
+    if (!deleteduser) {
+      res
+        .status(404)
+        .json({ ok: false, userdata: deleteduser, gamedata: deletedgames }); //404: Not found
+    } else {
+      res
+        .status(200)
+        .json({ ok: true, userdata: deleteduser, gamedata: deletedgames }); //200: OK
+    }
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 module.exports = {
   register,
   login,
+  deleteaccount,
 };
