@@ -1,6 +1,17 @@
 const Games = require("../models/gameModel");
 const Users = require("../models/userModel");
 
+const sport_img = {
+  football: "https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg",
+  basketball: "https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg",
+  volleyball: "https://images.pexels.com/photos/2444852/pexels-photo-2444852.jpeg",
+  tennis: "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
+  padel: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
+  billiards: "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
+  badminton: "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
+  baseball: "https://images.pexels.com/photos/1234953/pexels-photo-1234953.jpeg",
+};
+
 const addgame = async (req, res) => {
   //console.log('add game', req.body)
   const {
@@ -26,7 +37,7 @@ const addgame = async (req, res) => {
       city: city,
       location: location,
       sport: sport,
-      sport_img: sport,
+      sport_img: sport_img[sport],
       max_players: max_players,
       min_players: min_players,
       owner: owner,
@@ -76,7 +87,7 @@ const editgame = async (req, res) => {
       city: city,
       location: location,
       sport: sport,
-      sport_img: sport,
+      sport_img: sport_img[sport],
       max_players: max_players,
       min_players: min_players,
       joined_players: joined_players,
