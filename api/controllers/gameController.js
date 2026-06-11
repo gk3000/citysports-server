@@ -13,7 +13,6 @@ const sport_img = {
 };
 
 const addgame = async (req, res) => {
-  //console.log('add game', req.body)
   const {
     title,
     description,
@@ -30,6 +29,7 @@ const addgame = async (req, res) => {
     cost,
     skilllevel,
   } = req.body;
+
   try {
     const newgame = {
       title: title,
@@ -147,7 +147,7 @@ const getgames = async (req, res) => {
     }
     if (skilllevel) query.skilllevel = { $in: skilllevel };
     const games = await Games.find(query);
-    //console.log(query);
+    console.log('query',query);
     //console.log(games[0]);
     res.status(200).json({ ok: true, data: games }); //200: OK
   } catch (error) {
