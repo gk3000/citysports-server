@@ -136,6 +136,7 @@ const getgame = async (req, res) => {
 };
 
 const getgames = async (req, res) => {
+  console.log('GET GAMES')
   const { city, owner, sport, skilllevel } = req.query; //test in postman with params
   try {
     let query = {};
@@ -146,7 +147,7 @@ const getgames = async (req, res) => {
       query.sport = { $in: sportArray };
     }
     if (skilllevel) query.skilllevel = { $in: skilllevel };
-    const games = await Games.find(query);
+    const games = await Games.find({});
     console.log('query',query);
     //console.log(games[0]);
     res.status(200).json({ ok: true, data: games }); //200: OK
