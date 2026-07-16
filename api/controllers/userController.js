@@ -63,6 +63,25 @@ const login = async (req, res) => {
   }
 };
 
+const edituser = async (req, res) => {
+  const { id } = req.params;
+  const { location } = req.body;
+  try {
+    const edited = await Users.findByIdAndUpdate(
+      id,
+      { location },
+      { new: true },
+    );
+    if (!edited) {
+      res.status(404).json({ ok: false, data: edited }); //404: Not found
+    } else {
+      res.status(200).json({ ok: true, data: edited }); //200: OK
+    }
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 const deleteaccount = async (req, res) => {
   const { id } = req.params;
   try {
@@ -88,5 +107,6 @@ const deleteaccount = async (req, res) => {
 module.exports = {
   register,
   login,
+  edituser,
   deleteaccount,
 };
