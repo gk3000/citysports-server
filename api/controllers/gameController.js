@@ -2,14 +2,21 @@ const Games = require("../models/gameModel");
 const Users = require("../models/userModel");
 
 const sport_img = {
-  football: "https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg",
-  basketball: "https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg",
-  volleyball: "https://images.pexels.com/photos/2444852/pexels-photo-2444852.jpeg",
-  tennis: "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
+  football:
+    "https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg",
+  basketball:
+    "https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg",
+  volleyball:
+    "https://images.pexels.com/photos/2444852/pexels-photo-2444852.jpeg",
+  tennis:
+    "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
   padel: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
-  billiards: "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
-  badminton: "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
-  baseball: "https://images.pexels.com/photos/1234953/pexels-photo-1234953.jpeg",
+  billiards:
+    "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
+  badminton:
+    "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
+  baseball:
+    "https://images.pexels.com/photos/1234953/pexels-photo-1234953.jpeg",
 };
 
 const addgame = async (req, res) => {
@@ -57,7 +64,7 @@ const addgame = async (req, res) => {
     );
     res.status(201).json({ ok: true, data: created }); //201: created
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
 };
@@ -156,10 +163,45 @@ const getgames = async (req, res) => {
   }
 };
 
+const joingame = async (req, res) => {
+  const { user_id, game_id } = req.params;
+  try {
+    //update game object
+    const game = await Games.findById(game_id);
+    console.log(game)
+    if (!game) {
+      return res.status(404).json({ ok: false, message: "Game not found" }); //404: Not found
+    }
+    if (game.joined_players.includes(user_id)) {
+      return res
+        .status(400)
+        .json({ ok: false, message: "User already joined" }); //400: Bad request
+    }
+    if (game.joined_players.length >= game.max_players) {
+      return res.status(400).json({ ok: false, message: "Game is full" }); //400: Bad request
+    }
+    const updated_game = await Games.findByIdAndUpdate(
+      game_id,
+      { $addToSet: { joined_players: user_id } },
+      { new: true },
+    );
+    //update user object
+    const updated_user = await Users.findByIdAndUpdate(
+      user_id,
+      { $addToSet: { games: game_id } },
+      { new: true },
+    );
+    res.status(200).json({ ok: true, game: updated_game, user: updated_user }); //200: OK
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 module.exports = {
   addgame,
   editgame,
   removegame,
   getgame,
   getgames,
+  joingame,
 };
