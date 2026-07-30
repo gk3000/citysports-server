@@ -63,6 +63,20 @@ const login = async (req, res) => {
   }
 };
 
+const loaduser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const myuser = await Users.findById(id);
+    if (!myuser) {
+      res.status(404).json({ ok: false, message: "User not found" }); //404: Not found
+    } else {
+      res.status(200).json({ ok: true, data: myuser }); //200: OK
+    }
+  } catch (error) {
+    res.status(500).json({ ok: false, error }); //500: Internal server error
+  }
+};
+
 const edituser = async (req, res) => {
   const { id } = req.params;
   const { location } = req.body;
@@ -107,6 +121,7 @@ const deleteaccount = async (req, res) => {
 module.exports = {
   register,
   login,
+  loaduser,
   edituser,
   deleteaccount,
 };
