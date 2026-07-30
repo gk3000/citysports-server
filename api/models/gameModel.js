@@ -37,10 +37,12 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  joined_players: {
-    type: Array,
-    required: true,
-  },
+  joined_players: [
+    {
+      _id: { type: String, required: true },
+      username: { type: String, required: true },
+    },
+  ],
   date: {
     type: String,
     required: true,
