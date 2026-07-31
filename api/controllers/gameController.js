@@ -143,7 +143,7 @@ const getgame = async (req, res) => {
 };
 
 const getgames = async (req, res) => {
-  console.log('GET GAMES')
+  console.log("GET GAMES");
   const { city, owner, sport, skilllevel } = req.query; //test in postman with params
   try {
     let query = {};
@@ -156,7 +156,7 @@ const getgames = async (req, res) => {
     if (skilllevel) query.skilllevel = { $in: skilllevel };
     const games = await Games.find(query);
     //const users = await Users.find()
-    console.log('query',query);
+    console.log("query", query);
     //console.log("games: ", games)
     //console.log("users: ", users)
     //console.log(games[0]);
@@ -167,15 +167,19 @@ const getgames = async (req, res) => {
 };
 
 const joingame = async (req, res) => {
-  const { user_id, game_id } = req.params;
+  const { game_id } = req.params;
+  const { user } = req.body;
   try {
     //update game object
     const game = await Games.findById(game_id);
-    console.log(game)
+    console.log(game);
     if (!game) {
       return res.status(404).json({ ok: false, message: "Game not found" }); //404: Not found
     }
-    if (game.joined_players.includes(user_id)) {
+    const alreadyJoined = game.joined_players.some(
+      (player) => player._id.toString() === user._id.toString(),
+    );
+    if (alreadyJoined) {
       return res
         .status(400)
         .json({ ok: false, message: "User already joined" }); //400: Bad request
@@ -183,14 +187,18 @@ const joingame = async (req, res) => {
     if (game.joined_players.length >= game.max_players) {
       return res.status(400).json({ ok: false, message: "Game is full" }); //400: Bad request
     }
+    const newPlayer = {
+      _id: user._id,
+      username: user.username,
+    };
     const updated_game = await Games.findByIdAndUpdate(
       game_id,
-      { $addToSet: { joined_players: user_id } },
+      { $addToSet: { joined_players: newPlayer } },
       { new: true },
     );
     //update user object
     const updated_user = await Users.findByIdAndUpdate(
-      user_id,
+      user._id,
       { $addToSet: { games: game_id } },
       { new: true },
     );
