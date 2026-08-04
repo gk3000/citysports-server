@@ -11,8 +11,7 @@ const sport_img = {
   tennis:
     "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
   padel: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
-  billiards:
-    "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
+  pool: "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
   badminton:
     "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
   baseball:
