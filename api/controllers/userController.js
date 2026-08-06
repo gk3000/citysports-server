@@ -79,18 +79,22 @@ const loaduser = async (req, res) => {
 
 const edituser = async (req, res) => {
   const { id } = req.params;
-  const { location } = req.body;
+  const { location, username, birthday, favoriteSports, password } = req.body;
+  const update = {};
+  if (location !== undefined) update.location = location;
+  if (username !== undefined) update.username = username;
+  if (birthday !== undefined) update.birthday = birthday;
+  if (favoriteSports !== undefined) update.favoriteSports = favoriteSports;
+  if (password) {
+    const salt = bcrypt.genSaltSync(10);
+    update.password = bcrypt.hashSync(password, salt);
+  }
   try {
-    const edited = await Users.findByIdAndUpdate(
-      id,
-      { location },
-      { new: true },
-    );
+    const edited = await Users.findByIdAndUpdate(id, update, { new: true });
     if (!edited) {
-      res.status(404).json({ ok: false, data: edited }); //404: Not found
-    } else {
-      res.status(200).json({ ok: true, data: edited }); //200: OK
+      return res.status(404).json({ ok: false, data: edited }); //404: Not found
     }
+    res.status(200).json({ ok: true, data: edited }); //200: OK
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
