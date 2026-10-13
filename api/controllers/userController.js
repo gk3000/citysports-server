@@ -79,12 +79,12 @@ const loaduser = async (req, res) => {
 
 const edituser = async (req, res) => {
   const { id } = req.params;
-  const { location, username, birthday, favoriteSports, password } = req.body;
+  const { location, username, birthday, sports, password } = req.body;
   const update = {};
   if (location !== undefined) update.location = location;
   if (username !== undefined) update.username = username;
   if (birthday !== undefined) update.birthday = birthday;
-  if (favoriteSports !== undefined) update.favoriteSports = favoriteSports;
+  if (sports !== undefined) update.sports = sports;
   if (password) {
     const salt = bcrypt.genSaltSync(10);
     update.password = bcrypt.hashSync(password, salt);
@@ -105,9 +105,9 @@ const deleteaccount = async (req, res) => {
   try {
     //delete games of user before deleting user account
     const deletedgames = await Games.deleteMany({ owner: id });
-    console.log(deletedgames);
+    //console.log(deletedgames);
     const deleteduser = await Users.findByIdAndDelete(id);
-    console.log(deleteduser);
+    //console.log(deleteduser);
     if (!deleteduser) {
       res
         .status(404)

@@ -11,7 +11,7 @@ const sport_img = {
   tennis:
     "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
   padel: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
-  pool: "https://images.pexels.com/photos/29375913/pexels-photo-29375913.jpeg",
+  pickleball: "https://images.pexels.com/photos/19642658/pexels-photo-19642658.jpeg",
   badminton:
     "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
   baseball:
@@ -142,7 +142,7 @@ const getgame = async (req, res) => {
 };
 
 const getgames = async (req, res) => {
-  console.log("GET GAMES");
+  //console.log("GET GAMES");
   const { city, owner, sport, skilllevel } = req.query; //test in postman with params
   try {
     let query = {};
@@ -155,7 +155,7 @@ const getgames = async (req, res) => {
     if (skilllevel) query.skilllevel = { $in: skilllevel };
     const games = await Games.find(query);
     //const users = await Users.find()
-    console.log("query", query);
+    //console.log("query", query);
     //console.log("games: ", games)
     //console.log("users: ", users)
     //console.log(games[0]);
@@ -171,7 +171,7 @@ const joingame = async (req, res) => {
   try {
     //update game object
     const game = await Games.findById(game_id);
-    console.log(game);
+    //console.log(game);
     if (!game) {
       return res.status(404).json({ ok: false, message: "Game not found" }); //404: Not found
     }
