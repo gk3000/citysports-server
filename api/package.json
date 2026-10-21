@@ -16,7 +16,7 @@
     "express": "*",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "*",
-    "nodemailer": "*",
+    "nodemailer": "^10.1.0",
     "validator": "^13.15.35"
   }
 }

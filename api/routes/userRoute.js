@@ -3,6 +3,7 @@ const controller = require("../controllers/userController");
 
 router.post("/register", controller.register);
 router.post("/login", controller.login);
+router.post("/forgotpassword", controller.forgotpassword);
 router.get("/loaduser/:id", controller.loaduser);
 router.patch("/edituser/:id", controller.edituser);
 router.delete("/deleteaccount/:id", controller.deleteaccount);

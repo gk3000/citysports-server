@@ -2,6 +2,8 @@ const Users = require("../models/userModel");
 const Games = require("../models/gameModel");
 const bcrypt = require("bcryptjs"); // https://github.com/dcodeIO/bcrypt.js#readme //npm install bcryptjs
 const validator = require("validator"); //npm install validator
+const crypto = require("crypto");
+const sendMail = require("../utils/sendMail");
 
 const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -60,6 +62,70 @@ const login = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ ok: false, error }); //500: Internal server error
+  }
+};
+
+function generateTempPassword(length = 10) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  const bytes = crypto.randomBytes(length);
+  let pw = "";
+  for (let i = 0; i < length; i++) pw += chars[bytes[i] % chars.length];
+  return pw;
+}
+
+const forgotpassword = async (req, res) => {
+  try {
+    const email = (req.body.email || "").trim().toLowerCase();
+    //console.log(email)
+    if (!email) {
+      return res.status(400).json({ message: "Set an email." });
+    }
+
+    const user = await Users.findOne({ email });
+    const genericAnswer = {
+      message:
+        "A temporary password and instructions have been sent to the associated email",
+    };
+
+    if (!user) return res.json(genericAnswer);
+
+    const tempPassword = generateTempPassword();
+    user.password = await bcrypt.hash(tempPassword, 10);
+    await user.save();
+
+    //text: plain-text fallback, html: formatted version shown by most mail clients
+    await sendMail({
+      to: user.email,
+      subject: "Your temporary password",
+      text:
+        `Here's your temporary password \n\n` +
+        `Hello there, \n\n` +
+        `Please use the temporary password below to log back in. \n\n` +
+        `${tempPassword} \n\n` +
+        `How to log back in \n\n` +
+        `1. Open up the CitySports app and tap Log In \n\n` +
+        `2. Enter your email and the temporary password above \n\n` +
+        `3. You should be all set! \n\n` +
+        `Once logged in you can update your password at any time by going into your profile settings.`,
+      html: `
+        <h2>Here's your temporary password</h2>
+        <p>Hello there,</p>
+        <p>Please use the temporary password below to log back in.</p>
+        <p style="font-size:20px;font-color:grey;font-weight:bold;letter-spacing:2px">${tempPassword}</p>
+        <h3>How to log back in</h3>
+        <p>1. Open up the CitySports app and tap <b>Log In</b></p>
+        <p>2. Enter your email and the temporary password above</p>
+        <p>3. You should be all set!</p>
+        <p>Once logged in you can update your password at any time by going into your profile settings.</p>
+      `,
+    });
+
+    return res.json(genericAnswer);
+  } catch (err) {
+    console.error("resetPassword error:", err);
+    return res
+      .status(500) //500: Internal server error
+      .json({ message: "Server error" });
   }
 };
 
@@ -125,6 +191,7 @@ const deleteaccount = async (req, res) => {
 module.exports = {
   register,
   login,
+  forgotpassword,
   loaduser,
   edituser,
   deleteaccount,
