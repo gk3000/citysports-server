@@ -90,6 +90,7 @@ const forgotpassword = async (req, res) => {
     if (!user) return res.json(genericAnswer);
 
     const tempPassword = generateTempPassword();
+    //console.log(tempPassword);
     user.password = await bcrypt.hash(tempPassword, 10);
     await user.save();
 
