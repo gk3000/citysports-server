@@ -11,7 +11,8 @@ const sport_img = {
   tennis:
     "https://images.pexels.com/photos/23340244/pexels-photo-23340244.jpeg",
   padel: "https://images.pexels.com/photos/1103829/pexels-photo-1103829.jpeg",
-  pickleball: "https://images.pexels.com/photos/19642658/pexels-photo-19642658.jpeg",
+  pickleball:
+    "https://images.pexels.com/photos/19642658/pexels-photo-19642658.jpeg",
   badminton:
     "https://images.pexels.com/photos/8007075/pexels-photo-8007075.jpeg",
   baseball:
@@ -56,12 +57,13 @@ const addgame = async (req, res) => {
       skilllevel: skilllevel,
     };
     const created = await Games.create(newgame);
-    await Users.findOneAndUpdate(
-      { username: owner },
-      { $push: { games: created._id } },
+    const updatedUser = await Users.findOneAndUpdate(
+      { _id: owner },
+      { $push: { games: created._id.toString() } },
       { new: true },
     );
-    res.status(201).json({ ok: true, data: created }); //201: created
+    //console.log("updated", updatedUser);
+    res.status(201).json({ ok: true, data: created, user: updatedUser }); //201: created
   } catch (error) {
     console.log(error);
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
@@ -123,9 +125,10 @@ const removegame = async (req, res) => {
     const removed = await Games.findByIdAndDelete(id);
     if (!removed) {
       res.status(404).json({ ok: false, data: removed }); //404: Not found
-    } else {
-      res.status(200).json({ ok: true, data: removed }); //200: OK
     }
+    // remove the game id from the games list of every user
+    await Users.updateMany({ games: id }, { $pull: { games: id } });
+    res.status(200).json({ ok: true, data: removed }); //200: OK
   } catch (error) {
     res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
   }
