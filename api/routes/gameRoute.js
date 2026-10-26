@@ -6,6 +6,7 @@ router.patch("/editgame/:id", controller.editgame);
 router.delete("/removegame/:id", controller.removegame);
 router.get("/getgame/:id", controller.getgame);
 router.get("/getgames", controller.getgames);
+router.get("/getgamesofuser/:user_id", controller.getgamesofuser);
 router.patch("/joingame/:game_id", controller.joingame);
 
 module.exports = router;

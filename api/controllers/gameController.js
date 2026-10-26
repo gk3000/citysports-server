@@ -168,6 +168,17 @@ const getgames = async (req, res) => {
   }
 };
 
+const getgamesofuser = async (req, res) => {
+  const { user_id } = req.params;
+  try {
+    const user = await Users.findById(user_id);
+    const games = await Games.find({ _id: { $in: user.games } });
+    res.status(200).json({ ok: true, data: games }); //200: OK
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 const joingame = async (req, res) => {
   const { game_id } = req.params;
   const { user } = req.body;
@@ -216,5 +227,6 @@ module.exports = {
   removegame,
   getgame,
   getgames,
+  getgamesofuser,
   joingame,
 };
