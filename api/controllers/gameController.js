@@ -221,6 +221,33 @@ const joingame = async (req, res) => {
   }
 };
 
+const cancelgame = async (req, res) => {
+  const { game_id, user_id } = req.params;
+  try {
+    //delete in joinedplayers from games
+    const game = await Games.findByIdAndUpdate(
+      game_id,
+      { $pull: { joined_players: { _id: user_id } } },
+      { new: true },
+    );
+    if (!game) {
+      return res.status(404).json({ ok: false, message: "Game not found" }); //404: Not found
+    }
+    //delete in games from user
+    const user = await Users.findByIdAndUpdate(
+      user_id,
+      { $pull: { games: game_id } },
+      { new: true },
+    );
+    if (!user) {
+      return res.status(404).json({ ok: false, message: "User not found" }); //404: Not found
+    }
+    res.status(200).json({ ok: true, game: game, user: user }); //200: OK
+  } catch (error) {
+    res.status(500).json({ ok: false, message: error.message }); //500: Internal server error
+  }
+};
+
 module.exports = {
   addgame,
   editgame,
@@ -229,4 +256,5 @@ module.exports = {
   getgames,
   getgamesofuser,
   joingame,
+  cancelgame,
 };
