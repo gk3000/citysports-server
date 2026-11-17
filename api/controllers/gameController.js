@@ -149,7 +149,9 @@ const getgames = async (req, res) => {
   const { city, owner, sport, skilllevel } = req.query; //test in postman with params
   try {
     let query = {};
-    query.city = city.trim(); //mandatory filter
+    if (city) {
+      query.city = city.trim();
+    }
     if (owner) query.owner = owner;
     if (sport) {
       const sportArray = Array.isArray(sport) ? sport : [sport];
